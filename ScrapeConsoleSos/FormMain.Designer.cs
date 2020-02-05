@@ -48,23 +48,26 @@
             this.btnSetPath = new System.Windows.Forms.Button();
             this.cboYear = new System.Windows.Forms.ComboBox();
             this.lblYearToScrape = new System.Windows.Forms.Label();
+            this.btnLoadElections = new System.Windows.Forms.Button();
+            this.lblElections = new System.Windows.Forms.Label();
+            this.cboElections = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // txtLog
             // 
             this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLog.Location = new System.Drawing.Point(12, 153);
+            this.txtLog.Location = new System.Drawing.Point(12, 175);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLog.Size = new System.Drawing.Size(614, 181);
+            this.txtLog.Size = new System.Drawing.Size(623, 205);
             this.txtLog.TabIndex = 1;
             // 
             // btnClear
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClear.Location = new System.Drawing.Point(646, 153);
+            this.btnClear.Location = new System.Drawing.Point(654, 175);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(58, 27);
             this.btnClear.TabIndex = 31;
@@ -75,7 +78,7 @@
             // btnCopyLog
             // 
             this.btnCopyLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCopyLog.Location = new System.Drawing.Point(646, 191);
+            this.btnCopyLog.Location = new System.Drawing.Point(653, 213);
             this.btnCopyLog.Name = "btnCopyLog";
             this.btnCopyLog.Size = new System.Drawing.Size(60, 27);
             this.btnCopyLog.TabIndex = 32;
@@ -88,7 +91,7 @@
             this.tbSiteUrl.Location = new System.Drawing.Point(99, 35);
             this.tbSiteUrl.MaxLength = 150;
             this.tbSiteUrl.Name = "tbSiteUrl";
-            this.tbSiteUrl.Size = new System.Drawing.Size(478, 20);
+            this.tbSiteUrl.Size = new System.Drawing.Size(461, 20);
             this.tbSiteUrl.TabIndex = 134;
             this.tbSiteUrl.Text = "https://elections.sos.ga.gov/GAElection/CandidateDetails";
             // 
@@ -97,7 +100,7 @@
             this.tbCsvFilePath.Location = new System.Drawing.Point(99, 62);
             this.tbCsvFilePath.MaxLength = 150;
             this.tbCsvFilePath.Name = "tbCsvFilePath";
-            this.tbCsvFilePath.Size = new System.Drawing.Size(478, 20);
+            this.tbCsvFilePath.Size = new System.Drawing.Size(461, 20);
             this.tbCsvFilePath.TabIndex = 136;
             this.tbCsvFilePath.Text = "C:\\Temp";
             // 
@@ -112,17 +115,17 @@
             // tbStatus
             // 
             this.tbStatus.AllowDrop = true;
-            this.tbStatus.Location = new System.Drawing.Point(97, 92);
+            this.tbStatus.Location = new System.Drawing.Point(97, 116);
             this.tbStatus.MaxLength = 100;
             this.tbStatus.Name = "tbStatus";
-            this.tbStatus.Size = new System.Drawing.Size(480, 20);
+            this.tbStatus.Size = new System.Drawing.Size(463, 20);
             this.tbStatus.TabIndex = 137;
             this.tbStatus.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // btnStart
             // 
             this.btnStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStart.Location = new System.Drawing.Point(584, 101);
+            this.btnStart.Location = new System.Drawing.Point(573, 125);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(61, 27);
             this.btnStart.TabIndex = 138;
@@ -133,7 +136,7 @@
             // btnStop
             // 
             this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnStop.Location = new System.Drawing.Point(649, 101);
+            this.btnStop.Location = new System.Drawing.Point(646, 125);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(68, 27);
             this.btnStop.TabIndex = 139;
@@ -144,7 +147,7 @@
             // btnSaveCsv
             // 
             this.btnSaveCsv.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveCsv.Location = new System.Drawing.Point(648, 61);
+            this.btnSaveCsv.Location = new System.Drawing.Point(646, 61);
             this.btnSaveCsv.Name = "btnSaveCsv";
             this.btnSaveCsv.Size = new System.Drawing.Size(68, 27);
             this.btnSaveCsv.TabIndex = 140;
@@ -154,9 +157,9 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(97, 112);
+            this.progressBar1.Location = new System.Drawing.Point(97, 136);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(480, 23);
+            this.progressBar1.Size = new System.Drawing.Size(463, 23);
             this.progressBar1.TabIndex = 141;
             // 
             // lblSiteUrl
@@ -191,14 +194,14 @@
             this.tbSiteTitle.Location = new System.Drawing.Point(99, 8);
             this.tbSiteTitle.MaxLength = 150;
             this.tbSiteTitle.Name = "tbSiteTitle";
-            this.tbSiteTitle.Size = new System.Drawing.Size(478, 20);
+            this.tbSiteTitle.Size = new System.Drawing.Size(461, 20);
             this.tbSiteTitle.TabIndex = 144;
             this.tbSiteTitle.Text = "GA Secretary of State Web Site";
             // 
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(12, 92);
+            this.lblStatus.Location = new System.Drawing.Point(12, 116);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(74, 13);
             this.lblStatus.TabIndex = 146;
@@ -207,7 +210,7 @@
             // lblProgress
             // 
             this.lblProgress.AutoSize = true;
-            this.lblProgress.Location = new System.Drawing.Point(12, 116);
+            this.lblProgress.Location = new System.Drawing.Point(12, 140);
             this.lblProgress.Name = "lblProgress";
             this.lblProgress.Size = new System.Drawing.Size(85, 13);
             this.lblProgress.TabIndex = 147;
@@ -216,7 +219,7 @@
             // btnSetPath
             // 
             this.btnSetPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSetPath.Location = new System.Drawing.Point(583, 61);
+            this.btnSetPath.Location = new System.Drawing.Point(574, 61);
             this.btnSetPath.Name = "btnSetPath";
             this.btnSetPath.Size = new System.Drawing.Size(61, 27);
             this.btnSetPath.TabIndex = 148;
@@ -227,7 +230,7 @@
             // cboYear
             // 
             this.cboYear.FormattingEnabled = true;
-            this.cboYear.Location = new System.Drawing.Point(611, 30);
+            this.cboYear.Location = new System.Drawing.Point(571, 30);
             this.cboYear.Name = "cboYear";
             this.cboYear.Size = new System.Drawing.Size(68, 21);
             this.cboYear.TabIndex = 149;
@@ -235,17 +238,48 @@
             // lblYearToScrape
             // 
             this.lblYearToScrape.AutoSize = true;
-            this.lblYearToScrape.Location = new System.Drawing.Point(606, 9);
+            this.lblYearToScrape.Location = new System.Drawing.Point(566, 9);
             this.lblYearToScrape.Name = "lblYearToScrape";
             this.lblYearToScrape.Size = new System.Drawing.Size(78, 13);
             this.lblYearToScrape.TabIndex = 150;
             this.lblYearToScrape.Text = "Year to Scrape";
             // 
+            // btnLoadElections
+            // 
+            this.btnLoadElections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnLoadElections.Location = new System.Drawing.Point(647, 8);
+            this.btnLoadElections.Name = "btnLoadElections";
+            this.btnLoadElections.Size = new System.Drawing.Size(68, 45);
+            this.btnLoadElections.TabIndex = 151;
+            this.btnLoadElections.Text = "Load Elections";
+            this.btnLoadElections.UseVisualStyleBackColor = true;
+            this.btnLoadElections.Click += new System.EventHandler(this.btnLoadElections_Click);
+            // 
+            // lblElections
+            // 
+            this.lblElections.AutoSize = true;
+            this.lblElections.Location = new System.Drawing.Point(14, 90);
+            this.lblElections.Name = "lblElections";
+            this.lblElections.Size = new System.Drawing.Size(50, 13);
+            this.lblElections.TabIndex = 152;
+            this.lblElections.Text = "Elections";
+            // 
+            // cboElections
+            // 
+            this.cboElections.FormattingEnabled = true;
+            this.cboElections.Location = new System.Drawing.Point(99, 88);
+            this.cboElections.Name = "cboElections";
+            this.cboElections.Size = new System.Drawing.Size(461, 21);
+            this.cboElections.TabIndex = 153;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(725, 343);
+            this.ClientSize = new System.Drawing.Size(725, 393);
+            this.Controls.Add(this.cboElections);
+            this.Controls.Add(this.lblElections);
+            this.Controls.Add(this.btnLoadElections);
             this.Controls.Add(this.lblYearToScrape);
             this.Controls.Add(this.cboYear);
             this.Controls.Add(this.btnSetPath);
@@ -295,6 +329,9 @@
         private System.Windows.Forms.Button btnSetPath;
         private System.Windows.Forms.ComboBox cboYear;
         private System.Windows.Forms.Label lblYearToScrape;
+        private System.Windows.Forms.Button btnLoadElections;
+        private System.Windows.Forms.Label lblElections;
+        private System.Windows.Forms.ComboBox cboElections;
     }
 }
 

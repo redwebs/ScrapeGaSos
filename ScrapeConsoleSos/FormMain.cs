@@ -308,10 +308,28 @@ namespace ScrapeConsoleSos
             }
         }
 
+        private void btnLoadElections_Click(object sender, EventArgs e)
+        {
+            var list = new List<Candidate>();
+
+            var arrObjects = new object[] { (int)cboYear.SelectedItem, list };        // Declare the array of objects
+
+            if (backgroundWorkerScrape.IsBusy)
+            {
+                AppendLogBox("Cannot get , Background worker is busy.");
+                return;
+            }
+
+            btnStart.Enabled = false;                           // Disable the Start button
+            txtLog.Text = "Starting new scrape.";
+
+            backgroundWorkerScrape.RunWorkerAsync(arrObjects);  // Call the background worker, process on a separate thread
+
+        }
+
         private void AppendLogBox(string str)
         {
             txtLog.Text = $"{str}{Environment.NewLine}{txtLog.Text}";
         }
-
     }
 }
