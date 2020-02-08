@@ -60,14 +60,33 @@ namespace ScrapeConsoleSos
 
         private void BackgroundWorkerScrape_DoWork(object sender, DoWorkEventArgs e)
         {
+            // Array = {0-Operation string, 1-Success bool, 2-Year int, 3-Election List, 4-Candidate List}
+
             var sendingWorker = (BackgroundWorker)sender;   // Capture the BackgroundWorker that fired the event
             var arrObjects = (object[])e.Argument;          // Collect the array of objects the we received from the main thread
-            var year = (int)arrObjects[0];                  // Get the numeric value from inside the objects array, don't forget to cast
+
+            // Get the input values from inside the objects array, don't forget to cast
+            var operation = (string) arrObjects[0];
+            var year = (int)arrObjects[2];
+            
             var timer = Stopwatch.StartNew();
 
             // Test functions:
             //  RunSingleQuery();
             //  TestAdditionalInfo();
+
+            switch (operation)
+            {
+                case "Elections":
+                    break;
+
+                case "Candidates":
+                    break;
+
+                default:
+                    break;
+            }
+
 
             var scrapeResult = new ScrapeResult
             {
@@ -310,13 +329,18 @@ namespace ScrapeConsoleSos
 
         private void btnLoadElections_Click(object sender, EventArgs e)
         {
-            var list = new List<Candidate>();
+            var operation = "Elections";
+            var success = true;
+            var year = (int) cboYear.SelectedItem;
+            var elections = new List<Election>();
+            var candidates = new List<Candidate>();
 
-            var arrObjects = new object[] { (int)cboYear.SelectedItem, list };        // Declare the array of objects
+            // Array = {0-Operation string, 1-Success bool, 2-Year int, 3-Election List, 4-Candidate List}
+            var arrObjects = new object[] {operation, success, year, elections, candidates };        // Declare the array of objects
 
             if (backgroundWorkerScrape.IsBusy)
             {
-                AppendLogBox("Cannot get , Background worker is busy.");
+                AppendLogBox("Cannot get elections, Background worker is busy.");
                 return;
             }
 
