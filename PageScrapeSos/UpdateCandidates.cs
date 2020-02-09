@@ -70,7 +70,7 @@ namespace PageScrapeSos
 
             if (!_httpRespMsg.IsSuccessStatusCode)
             {
-                CurrentStatus.LastOpMessage = $"ReadSubsequentPage call returned Status Code: {_httpRespMsg.StatusCode}";
+                CurrentStatus.LastOpMessage = $"GetElections call returned Status Code: {_httpRespMsg.StatusCode}";
                 CurrentStatus.ScrapeComplete = true;
                 CurrentStatus.LastPageCompleted++;
                 return elections;
@@ -78,7 +78,7 @@ namespace PageScrapeSos
 
             if (string.IsNullOrEmpty(contentString))
             {
-                CurrentStatus.LastOpMessage = "ReadSubsequentPage received null content";
+                CurrentStatus.LastOpMessage = "GetElections received null content";
                 CurrentStatus.ScrapeComplete = true;
                 CurrentStatus.LastPageCompleted++;
                 return elections;
@@ -86,23 +86,37 @@ namespace PageScrapeSos
 
             //CurrentStatus.LastOpMessage = "ReadSubsequentPage received document length = " + contentString.Length;
 
-            var pipeData = contentString.Split('|');
-            StorePostData(pipeData);
-
-            const string tgtTable = "/div/div/table/tr";
-
             var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(pipeData[2]);
+            htmlDoc.LoadHtml(contentString);
 
-            var nodes = htmlDoc.DocumentNode.SelectNodes(tgtTable);
+            const string tgtTable = "//*[@id=\"id_election\"]";
+            const string tgtTable2 = "//select[@id='id_election']/option";
 
-            if (nodes == null)
+            var electNodes = htmlDoc.DocumentNode.SelectNodes(tgtTable2);
+
+            if (electNodes == null)
             {
                 CurrentStatus.ScrapeComplete = true;
-                CurrentStatus.LastOpMessage = "Data table search returned null.";
-                CurrentStatus.LastPageCompleted++;
+                CurrentStatus.LastOpMessage = "ElectNodes search returned null.";
                 return elections;
             }
+
+            //var select = electNodes.First();
+            //if (select == null) return elections;
+
+            //foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//select[@id='chap_select']/option"))
+            //{
+            //    chapterTitles.Add(node.NextSibling.InnerText);
+            //}
+
+            //htmlDoc.LoadHtml(select.InnerHtml);
+            //const string tgtSelect = "//*[@id=\"id_election\"]";
+
+            foreach (var node in electNodes)
+            {
+                elections.Add(new Election(node.Attributes[0].Name, node.InnerText));
+            }
+            
             return elections;
         }
 
@@ -112,7 +126,7 @@ namespace PageScrapeSos
         {
             const string tgtNoResults = "//*[@id=\"ctl00_ContentPlaceHolder1_lblMessage\"]";
             const string tgtTable = "/html/body/form/table/tr[2]/td/table/tr/td[2]/div/div/div/table/tr";
-            const string tgtFooter = "//*[@id=\"ctl00_ContentPlaceHolder1_pSection\"]";
+            const string tgtFooter = "//*[@id=\"id_election\"]";
             const string tgtHiddenFields = "/html/body/form/input";
 
             ResetStatus(true, true);        // sets TotalPages = -1
