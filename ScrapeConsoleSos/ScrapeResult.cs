@@ -7,6 +7,8 @@ namespace ScrapeConsoleSos
 
     public class ScrapeResult
     {
+        public ScrapeOp Operation { get; set; } = ScrapeOp.Elections;
+
         public bool ErrorEncountered { get; set; } = false;
 
         public string ErrorMessage { get; set; } = string.Empty;
@@ -15,9 +17,18 @@ namespace ScrapeConsoleSos
 
         public List<Candidate> Candidates { get; set; }
 
+        public List<Election> Elections { get; set; }
+
         public string ElapsedTime { get; set; } = string.Empty;
 
         public SequenceStatus SequenceStat { get; set; }
 
+    }
+
+    public enum ScrapeOp
+    {
+        Elections = 1,
+
+        Candidates  = 2
     }
 }

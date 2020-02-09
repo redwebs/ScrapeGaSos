@@ -18,8 +18,8 @@ namespace PageScrapeSos
         #region Variables
 
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        // private const string CampaignByOfficeUrl = "http://media.ethics.ga.gov/search/Campaign/Campaign_ByOffice.aspx";
-        private const string OfficeSearchResultsUrl = "http://media.ethics.ga.gov/search/Campaign/Campaign_OfficeSearchResults.aspx";
+
+        private const string OfficeSearchResultsUrl = "https://elections.sos.ga.gov/GAElection/CandidateDetails";
 
         private static readonly NameValueCollection HiddenArguments = new NameValueCollection();
 
@@ -61,6 +61,52 @@ namespace PageScrapeSos
             CurrentStatus.InternalLoggingOn = intLoggingOn;
             CurrentStatus.LoggingOn = loggingOn;
         }
+
+        public static List<Election> GetElections(FormSearchSos formSearchSos)
+        {
+            var elections = new List<Election>();
+
+            var contentString = PostIt(new Uri(OfficeSearchResultsUrl), formSearchSos).Result;
+
+            if (!_httpRespMsg.IsSuccessStatusCode)
+            {
+                CurrentStatus.LastOpMessage = $"ReadSubsequentPage call returned Status Code: {_httpRespMsg.StatusCode}";
+                CurrentStatus.ScrapeComplete = true;
+                CurrentStatus.LastPageCompleted++;
+                return elections;
+            }
+
+            if (string.IsNullOrEmpty(contentString))
+            {
+                CurrentStatus.LastOpMessage = "ReadSubsequentPage received null content";
+                CurrentStatus.ScrapeComplete = true;
+                CurrentStatus.LastPageCompleted++;
+                return elections;
+            }
+
+            //CurrentStatus.LastOpMessage = "ReadSubsequentPage received document length = " + contentString.Length;
+
+            var pipeData = contentString.Split('|');
+            StorePostData(pipeData);
+
+            const string tgtTable = "/div/div/table/tr";
+
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(pipeData[2]);
+
+            var nodes = htmlDoc.DocumentNode.SelectNodes(tgtTable);
+
+            if (nodes == null)
+            {
+                CurrentStatus.ScrapeComplete = true;
+                CurrentStatus.LastOpMessage = "Data table search returned null.";
+                CurrentStatus.LastPageCompleted++;
+                return elections;
+            }
+            return elections;
+        }
+
+
 
         public static bool ReadFirstPage(FormSearch formSearch)
         {
@@ -409,6 +455,31 @@ namespace PageScrapeSos
             var request = await GetSearchPage(uri, method);
             // _bytesReceived += request
             return ""; //request;
+        }
+
+        private static async Task<string> PostIt(Uri uri, FormSearchSos formSearchSos)
+        {
+            var formContent = new FormUrlEncodedContent(formSearchSos.FormDataList());
+
+            // PrintKeyValuePairs(formDataList);
+
+            var request = new HttpRequestMessage {RequestUri = uri, Method = HttpMethod.Post, Content = formContent};
+
+            SetRequestHeaders(request);
+
+            _httpRespMsg = await NetHttpClient.Client.SendAsync(request);
+
+            if (!_httpRespMsg.IsSuccessStatusCode)
+            {
+                CurrentStatus.LastOpMessage = $"PostIt could not retrieve URL, StatusCode: {_httpRespMsg.StatusCode}";
+                CurrentStatus.ScrapeComplete = true;
+                return string.Empty;
+            }
+
+            var stringContent = await _httpRespMsg.Content.ReadAsStringAsync();
+            BytesReceived += stringContent.Length;
+
+            return stringContent;
         }
 
         private static async Task<string> PostIt(Uri uri, int pageNum)

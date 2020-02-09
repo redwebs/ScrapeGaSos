@@ -1,8 +1,138 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace PageScrapeSos
 {
-    // http://media.ethics.ga.gov/search/Campaign/Campaign_OfficeSearchResults.aspx?ElectionYear=2018&County=&City=&OfficeTypeID=120&District=&Division=&FilerID=&OfficeName=State%20Senate&Circuit=
+
+    public class FormDataVar
+    {
+        public FormDataVar()
+        {
+        }
+
+        public FormDataVar(string varName)
+        {
+            VarName = varName;
+        }
+
+        public FormDataVar(string varName, string varValue)
+        {
+            VarName = varName;
+            VarValue = varValue;
+        }
+
+        public string VarName { get; set; }
+        public string VarValue { get; set; }
+
+        public override string ToString()
+        {
+            return $"{VarName}=${VarValue}";
+        }
+    }
+    
+    public class FormSearchSos
+    {
+        /*
+
+	    1. nbElecYear:2020
+	    2. id_election:35214
+	    3. cd_party:
+	    4. cdOfficeType:
+	    5. id_office:0
+	    6. cdFlow:S
+
+        */
+
+        public FormDataVar ElectionYear { get; set; } = new FormDataVar("nbElecYear");
+        public FormDataVar ElectionId { get; set; } = new FormDataVar("id_election");
+        public FormDataVar Party { get; set; } = new FormDataVar("cd_party");
+        public FormDataVar OfficeType { get; set; } = new FormDataVar("cdOfficeType");
+        public FormDataVar OfficeId { get; set; } = new FormDataVar("id_office");
+        public FormDataVar Flow { get; set; } = new FormDataVar("cdFlow");
+
+        public FormSearchSos()
+        {
+        }
+
+        public FormSearchSos(string year)
+        {
+            ElectionYear.VarValue = year;
+            ElectionId.VarValue = string.Empty;
+            Party.VarValue = string.Empty;
+            OfficeType.VarValue = string.Empty;
+            OfficeId.VarValue = "0";
+            Flow.VarValue = "S";
+        }
+
+        public FormSearchSos(string year, string electionId)
+        {
+            ElectionYear.VarValue = year;
+            ElectionId.VarValue = electionId;
+
+            Party.VarValue = string.Empty;
+            OfficeType.VarValue = string.Empty;
+            OfficeId.VarValue = "0";
+            Flow.VarValue = "S";
+        }
+
+        public List<KeyValuePair<string, string>> FormDataList ()
+        {
+            return new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>(ElectionYear.VarName, ElectionYear.VarValue),
+                new KeyValuePair<string, string>(ElectionId.VarName, ElectionId.VarValue),
+                new KeyValuePair<string, string>(Party.VarName, Party.VarValue),
+                new KeyValuePair<string, string>(OfficeType.VarName, OfficeType.VarValue),
+                new KeyValuePair<string, string>(OfficeId.VarName, OfficeId.VarValue),
+                new KeyValuePair<string, string>(Flow.VarName, Flow.VarValue),
+            };
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append("ElectionYear = ");
+            sb.AppendLine(ElectionYear.ToString());
+            sb.Append("Party = ");
+            sb.AppendLine(Party.ToString());
+            sb.Append("OfficeType   = ");
+            sb.AppendLine(OfficeType.ToString());
+            sb.Append("OfficeId     = ");
+            sb.AppendLine(OfficeId.ToString());
+            sb.Append("Flow");
+            sb.AppendLine(Flow.ToString());
+            sb.AppendLine("--");
+
+            return sb.ToString();
+        }
+
+        public string ToSingleLine()
+        {
+            var sb = new StringBuilder();
+            sb.Append("ElectionYear = ");
+            sb.Append(ElectionYear);
+            sb.Append("Party = ");
+            sb.Append(Party);
+            sb.Append("OfficeType   = ");
+            sb.Append(OfficeType);
+            sb.Append("OfficeId     = ");
+            sb.Append(OfficeId);
+            sb.Append("Flow");
+            sb.Append(Flow);
+            sb.AppendLine("--");
+
+            return sb.ToString();
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
     public class FormSearch
     {
         public string ElectionYear { get; set; } = string.Empty;
