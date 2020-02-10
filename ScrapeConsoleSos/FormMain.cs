@@ -83,8 +83,6 @@ namespace ScrapeConsoleSos
                 case ScrapeOp.Elections:
                     
                     var formSrchSos = new FormSearchSos(year.ToString());
-                    // Set formSrchSos other elements?
-
                     scrapeResult.Elections = UpdateCandidates.GetElections(formSrchSos);
                     break;
 
