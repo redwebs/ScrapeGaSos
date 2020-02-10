@@ -148,9 +148,9 @@ namespace ScrapeConsoleSos
             }
             else
             {
-                if (result.SequenceStat.SequenceFail)
+                if (!result.SequenceStat.SequenceComplete)
                 {
-                    var lastMsg = result.SequenceStat.LastOpMessage;
+                    var lastMsg = result.ErrorMessage;
 
                     if (lastMsg.Contains(DnsNotResolved))
                     {
@@ -159,7 +159,7 @@ namespace ScrapeConsoleSos
                     else
                     {
                         // Some other fatal error
-                        tbStatus.Text = $" Job aborted, {lastMsg} Candidates, Elapsed Time: {result.ElapsedTime}";
+                        tbStatus.Text = $" Job aborted, {lastMsg}, Elapsed Time: {result.ElapsedTime}";
                     }
 
                 }
@@ -171,6 +171,13 @@ namespace ScrapeConsoleSos
                         case ScrapeOp.Elections:
                             
                             _electionList = result.Elections;
+                            cboElections.Items.Clear();
+
+                            foreach (Election election in _electionList)
+                            {
+                                cboElections.Items.Add(new ComboBoxItem(election.ElectionName, election.ElectionId));
+                            }
+
                             break;
 
                         case ScrapeOp.Candidates:
@@ -186,7 +193,7 @@ namespace ScrapeConsoleSos
                     tbStatus.Text = $" Job finished, {_electionList.Count} Elections, Elapsed Time: {result.ElapsedTime}";
                 }
             }
-            AppendLogBox($"Total Bytes Read: {result.SequenceStat.BytesReceived:###,###}");
+            //AppendLogBox($"Total Bytes Read: {result.SequenceStat.BytesReceived:###,###}");
             AppendLogBox(tbStatus.Text);
             btnStart.Enabled = true;
         }

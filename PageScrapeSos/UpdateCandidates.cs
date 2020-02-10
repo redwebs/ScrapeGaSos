@@ -114,8 +114,10 @@ namespace PageScrapeSos
 
             foreach (var node in electNodes)
             {
-                elections.Add(new Election(node.Attributes[0].Name, node.InnerText));
+                elections.Add(new Election(node.Attributes[0].Value, node.InnerText));
             }
+
+            CurrentStatus.ScrapeComplete = true;
             
             return elections;
         }

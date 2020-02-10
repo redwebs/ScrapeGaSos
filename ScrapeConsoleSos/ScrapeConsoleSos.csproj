@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClipboardHelper.cs" />
+    <Compile Include="ComboBoxItem.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>

@@ -23,6 +23,8 @@ namespace ScrapeConsoleSos
 
         public SequenceStatus SequenceStat { get; set; }
 
+        public bool ScrapeSuccess { get; set; } = false;
+
     }
 
     public enum ScrapeOp
