@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace PageScrapeSos
@@ -50,6 +51,9 @@ namespace PageScrapeSos
         public bool InternalLoggingOn { private get; set; } = true;
 
         public bool LoggingOn { get; set; } = true;
+
+        public List<Election> Elections { get; set; }
+
 
         public override string ToString()
         {

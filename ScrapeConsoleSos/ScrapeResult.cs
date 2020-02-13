@@ -25,6 +25,8 @@ namespace ScrapeConsoleSos
 
         public bool ScrapeSuccess { get; set; } = false;
 
+        public ScrapeStatus ScrapeStat { get; set; }
+
     }
 
     public enum ScrapeOp

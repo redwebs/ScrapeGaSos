@@ -62,7 +62,7 @@ namespace PageScrapeSos
             CurrentStatus.LoggingOn = loggingOn;
         }
 
-        public static List<Election> GetElections(FormSearchSos formSearchSos)
+        public static ScrapeStatus GetElections(FormSearchSos formSearchSos)
         {
             var elections = new List<Election>();
 
@@ -73,7 +73,7 @@ namespace PageScrapeSos
                 CurrentStatus.LastOpMessage = $"GetElections call returned Status Code: {_httpRespMsg.StatusCode}";
                 CurrentStatus.ScrapeComplete = true;
                 CurrentStatus.LastPageCompleted++;
-                return elections;
+                return CurrentStatus;
             }
 
             if (string.IsNullOrEmpty(contentString))
@@ -81,7 +81,7 @@ namespace PageScrapeSos
                 CurrentStatus.LastOpMessage = "GetElections received null content";
                 CurrentStatus.ScrapeComplete = true;
                 CurrentStatus.LastPageCompleted++;
-                return elections;
+                return CurrentStatus;
             }
 
             //CurrentStatus.LastOpMessage = "ReadSubsequentPage received document length = " + contentString.Length;
@@ -98,7 +98,7 @@ namespace PageScrapeSos
             {
                 CurrentStatus.ScrapeComplete = true;
                 CurrentStatus.LastOpMessage = "ElectNodes search returned null.";
-                return elections;
+                return CurrentStatus;
             }
 
             //var select = electNodes.First();
@@ -118,8 +118,9 @@ namespace PageScrapeSos
             }
 
             CurrentStatus.ScrapeComplete = true;
+            CurrentStatus.Elections = elections;
             
-            return elections;
+            return CurrentStatus;
         }
 
 

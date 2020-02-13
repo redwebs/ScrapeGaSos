@@ -61,14 +61,15 @@ namespace ScrapeConsoleSos
 
         private void BackgroundWorkerScrape_DoWork(object sender, DoWorkEventArgs e)
         {
-            // Array = {0-Operation enum, 1-Success bool, 2-Year int, 3-Election List, 4-Candidate List}
+            // Array = {0-Operation enum, 1-Year string, 2-Election string}
 
             var sendingWorker = (BackgroundWorker)sender;   // Capture the BackgroundWorker that fired the event
             var arrObjects = (object[])e.Argument;          // Collect the array of objects the we received from the main thread
 
             // Get the input values from inside the objects array, don't forget to cast
             var scrapeOp = (ScrapeOp) arrObjects[0];
-            var year = (int)arrObjects[2];
+            var year = (string)arrObjects[1];
+            var electionId = (string)arrObjects[2];
             
             var timer = Stopwatch.StartNew();
 
@@ -83,20 +84,19 @@ namespace ScrapeConsoleSos
                 case ScrapeOp.Elections:
                     
                     var formSrchSos = new FormSearchSos(year.ToString());
-                    scrapeResult.Elections = UpdateCandidates.GetElections(formSrchSos);
+                    scrapeResult.ScrapeStat = UpdateCandidates.GetElections(formSrchSos);  // returns ScrapeStatus
+
                     break;
 
                 case ScrapeOp.Candidates:
+
+                    var formSrchSosCand = new FormSearchSos(year, electionId );
 
                     break;
 
                 default:
                     break;
             }
-
-
-
-
 
 //            scrapeResult.SequenceStat = seqStatus;
             scrapeResult.ElapsedTime = timer.Elapsed.ToString();
@@ -146,7 +146,7 @@ namespace ScrapeConsoleSos
             }
             else
             {
-                if (!result.SequenceStat.SequenceComplete)
+                if (!result.ScrapeStat.ScrapeComplete )
                 {
                     var lastMsg = result.ErrorMessage;
 
@@ -168,14 +168,23 @@ namespace ScrapeConsoleSos
                     {
                         case ScrapeOp.Elections:
                             
-                            _electionList = result.Elections;
+                            _electionList = result.ScrapeStat.Elections;
                             cboElections.Items.Clear();
 
                             foreach (Election election in _electionList)
                             {
-                                cboElections.Items.Add(new ComboBoxItem(election.ElectionName, election.ElectionId));
+                                if (election.ElectionId != "0")
+                                {
+                                    cboElections.Items.Add(new ComboBoxItem(election.ElectionName, election.ElectionId));
+                                }
                             }
 
+                            if (cboElections.Items.Count > 0)
+                            {
+                                cboElections.SelectedIndex = cboElections.Items.Count - 1;
+                            }
+
+                            btnLoadElections.Enabled = true;
                             break;
 
                         case ScrapeOp.Candidates:
@@ -187,13 +196,12 @@ namespace ScrapeConsoleSos
                             break;
                     }
 
-                    tbStatus.Text = $" Job finished, {_candidateList.Count} Candidates, Elapsed Time: {result.ElapsedTime}";
-                    tbStatus.Text = $" Job finished, {_electionList.Count} Elections, Elapsed Time: {result.ElapsedTime}";
+             //       tbStatus.Text = $" Job finished, {_candidateList.Count} Candidates, Elapsed Time: {result.ElapsedTime}";
+               //     tbStatus.Text = $" Job finished, {_electionList.Count} Elections, Elapsed Time: {result.ElapsedTime}";
                 }
             }
             //AppendLogBox($"Total Bytes Read: {result.SequenceStat.BytesReceived:###,###}");
             AppendLogBox(tbStatus.Text);
-            btnStart.Enabled = true;
         }
 
         #endregion Background Worker Events
@@ -279,18 +287,28 @@ namespace ScrapeConsoleSos
 
         private void BtnStart_Click(object sender, EventArgs e)
         {
-            var list = new List<Candidate>();
+            var operation = ScrapeOp.Candidates;
+            var year = (int)cboYear.SelectedItem;
 
-            var arrObjects = new object[] {(int)cboYear.SelectedItem, list };        // Declare the array of objects
-
-            if (backgroundWorkerScrape.IsBusy)
+            if (cboElections.Items.Count > 0)
             {
-                AppendLogBox("Cannot start scrape, Background worker is busy.");
+                AppendLogBox("Cannot get candidates, no Election selected.");
                 return;
             }
 
-            btnStart.Enabled = false;                           // Disable the Start button
-            txtLog.Text = "Starting new scrape.";
+            var election = cboElections.SelectedItem.ToString();
+
+            // Array = {0-Operation enum, 1-Year string, 2-Election string}
+            var arrObjects = new object[] { operation, year, election};        // Declare the array of objects
+
+            if (backgroundWorkerScrape.IsBusy)
+            {
+                AppendLogBox("Cannot get candidates, Background worker is busy.");
+                return;
+            }
+
+            btnLoadElections.Enabled = false;                           // Disable the Start button
+            txtLog.Text = "Starting get candidates.";
 
             backgroundWorkerScrape.RunWorkerAsync(arrObjects);  // Call the background worker, process on a separate thread
         }
@@ -357,13 +375,10 @@ namespace ScrapeConsoleSos
         private void btnLoadElections_Click(object sender, EventArgs e)
         {
             var operation = ScrapeOp.Elections;
-            var success = true;
-            var year = (int) cboYear.SelectedItem;
-            var elections = new List<Election>();
-            var candidates = new List<Candidate>();
+            var year = (string) cboYear.SelectedItem.ToString();
 
-            // Array = {0-Operation enum, 1-Success bool, 2-Year int, 3-Election List, 4-Candidate List}
-            var arrObjects = new object[] {operation, success, year, elections, candidates };        // Declare the array of objects
+            // Array = {0-Operation enum, 1-Year string, 2-Election string}
+            var arrObjects = new object[] {operation, year, "0"};        // Declare the array of objects
 
             if (backgroundWorkerScrape.IsBusy)
             {
