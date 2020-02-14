@@ -401,5 +401,13 @@ namespace ScrapeConsoleSos
         {
             txtLog.Text = $"{str}{Environment.NewLine}{txtLog.Text}";
         }
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+
+            var sb =ScrapHelp.TestAgility(tbStatus.Text);
+
+            AppendLogBox(sb.ToString());
+        }
     }
 }

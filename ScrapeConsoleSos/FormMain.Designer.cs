@@ -51,6 +51,7 @@
             this.btnLoadElections = new System.Windows.Forms.Button();
             this.lblElections = new System.Windows.Forms.Label();
             this.cboElections = new System.Windows.Forms.ComboBox();
+            this.btnTest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtLog
@@ -272,11 +273,23 @@
             this.cboElections.Size = new System.Drawing.Size(461, 21);
             this.cboElections.TabIndex = 153;
             // 
+            // btnTest
+            // 
+            this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTest.Location = new System.Drawing.Point(654, 268);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(60, 27);
+            this.btnTest.TabIndex = 154;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(725, 393);
+            this.Controls.Add(this.btnTest);
             this.Controls.Add(this.cboElections);
             this.Controls.Add(this.lblElections);
             this.Controls.Add(this.btnLoadElections);
@@ -332,6 +345,7 @@
         private System.Windows.Forms.Button btnLoadElections;
         private System.Windows.Forms.Label lblElections;
         private System.Windows.Forms.ComboBox cboElections;
+        private System.Windows.Forms.Button btnTest;
     }
 }
 
