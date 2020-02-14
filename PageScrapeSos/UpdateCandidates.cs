@@ -64,8 +64,6 @@ namespace PageScrapeSos
 
         public static ScrapeStatus GetElections(FormSearchSos formSearchSos)
         {
-            var elections = new List<Election>();
-
             var contentString = PostIt(new Uri(OfficeSearchResultsUrl), formSearchSos).Result;
 
             if (!_httpRespMsg.IsSuccessStatusCode)
@@ -84,15 +82,14 @@ namespace PageScrapeSos
                 return CurrentStatus;
             }
 
-            //CurrentStatus.LastOpMessage = "ReadSubsequentPage received document length = " + contentString.Length;
+            CurrentStatus.LastOpMessage = "GetElections received document length = " + contentString.Length;
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(contentString);
 
-            const string tgtTable = "//*[@id=\"id_election\"]";
-            const string tgtTable2 = "//select[@id='id_election']/option";
+            const string tgtSelect = "//select[@id='id_election']/option";
 
-            var electNodes = htmlDoc.DocumentNode.SelectNodes(tgtTable2);
+            var electNodes = htmlDoc.DocumentNode.SelectNodes(tgtSelect);
 
             if (electNodes == null)
             {
@@ -101,24 +98,61 @@ namespace PageScrapeSos
                 return CurrentStatus;
             }
 
-            //var select = electNodes.First();
-            //if (select == null) return elections;
+            var elections = electNodes.Select(node => new Election(node.Attributes[0].Value, node.InnerText)).ToList();
 
-            //foreach (HtmlNode node in doc.DocumentNode.SelectNodes("//select[@id='chap_select']/option"))
-            //{
-            //    chapterTitles.Add(node.NextSibling.InnerText);
-            //}
+            CurrentStatus.ScrapeComplete = true;
+            CurrentStatus.ScrapeSuccess = true;
+            CurrentStatus.Elections = elections;
+            
+            return CurrentStatus;
+        }
 
-            //htmlDoc.LoadHtml(select.InnerHtml);
-            //const string tgtSelect = "//*[@id=\"id_election\"]";
+        public static ScrapeStatus GetCandidates(FormSearchSos formSearchSos)
+        {
+            var candidates = new List<Candidate>();
+
+            var contentString = PostIt(new Uri(OfficeSearchResultsUrl), formSearchSos).Result;
+
+            if (!_httpRespMsg.IsSuccessStatusCode)
+            {
+                CurrentStatus.LastOpMessage = $"GetCandidates call returned Status Code: {_httpRespMsg.StatusCode}";
+                CurrentStatus.ScrapeComplete = true;
+                CurrentStatus.LastPageCompleted++;
+                return CurrentStatus;
+            }
+
+            if (string.IsNullOrEmpty(contentString))
+            {
+                CurrentStatus.LastOpMessage = "GetCandidates received null content";
+                CurrentStatus.ScrapeComplete = true;
+                CurrentStatus.LastPageCompleted++;
+                return CurrentStatus;
+            }
+
+            CurrentStatus.LastOpMessage = "GetCandidates received document length = " + contentString.Length;
+
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(contentString);
+
+            const string tgtSelect = "//select[@id='id_election']/option";
+
+            var electNodes = htmlDoc.DocumentNode.SelectNodes(tgtSelect);
+
+            if (electNodes == null)
+            {
+                CurrentStatus.ScrapeComplete = true;
+                CurrentStatus.LastOpMessage = "ElectNodes search returned null.";
+                return CurrentStatus;
+            }
 
             foreach (var node in electNodes)
             {
-                elections.Add(new Election(node.Attributes[0].Value, node.InnerText));
+           //     elections.Add(new Election(node.Attributes[0].Value, node.InnerText));
             }
 
             CurrentStatus.ScrapeComplete = true;
-            CurrentStatus.Elections = elections;
+            CurrentStatus.ScrapeSuccess = true;
+        //    CurrentStatus.Elections = elections;
             
             return CurrentStatus;
         }

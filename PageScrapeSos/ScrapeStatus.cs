@@ -19,6 +19,8 @@ namespace PageScrapeSos
 
         public bool ScrapeComplete { get; set; } = false;
 
+        public bool ScrapeSuccess { get; set; } = false;
+
         public int TotalPages { get; set; }
 
         public int TotalCandidates { get; set; }

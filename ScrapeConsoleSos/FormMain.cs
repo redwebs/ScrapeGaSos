@@ -146,7 +146,7 @@ namespace ScrapeConsoleSos
             }
             else
             {
-                if (!result.ScrapeStat.ScrapeComplete )
+                if (!result.ScrapeStat.ScrapeSuccess)
                 {
                     var lastMsg = result.ErrorMessage;
 
@@ -285,18 +285,20 @@ namespace ScrapeConsoleSos
 
         // +++++++++++++++++++++++ UI Events +++++++++++++++++++++++++++++++++++
 
+        #region UI Events
+
         private void BtnStart_Click(object sender, EventArgs e)
         {
             var operation = ScrapeOp.Candidates;
-            var year = (int)cboYear.SelectedItem;
+            var year = cboYear.SelectedItem.ToString();
 
-            if (cboElections.Items.Count > 0)
+            if (cboElections.Items.Count == 0)
             {
                 AppendLogBox("Cannot get candidates, no Election selected.");
                 return;
             }
 
-            var election = cboElections.SelectedItem.ToString();
+            var election = ((ComboBoxItem)cboElections.SelectedItem).Value;
 
             // Array = {0-Operation enum, 1-Year string, 2-Election string}
             var arrObjects = new object[] { operation, year, election};        // Declare the array of objects
@@ -391,6 +393,9 @@ namespace ScrapeConsoleSos
 
             backgroundWorkerScrape.RunWorkerAsync(arrObjects);  // Call the background worker, process on a separate thread
         }
+
+        #endregion UI Events
+
 
         private void AppendLogBox(string str)
         {
