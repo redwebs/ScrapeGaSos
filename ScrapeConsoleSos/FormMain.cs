@@ -408,6 +408,8 @@ namespace ScrapeConsoleSos
             var sb =ScrapHelp.TestAgility(tbStatus.Text);
 
             AppendLogBox(sb.ToString());
+
+            FileHelper.StringToFile(sb, @"c:\temp\scrape.txt");
         }
     }
 }
