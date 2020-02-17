@@ -30,37 +30,97 @@ namespace PageScrapeSos
             return new Tuple<int, int>(currentPgNum, totalPages);
         }
 
+
+
         public static StringBuilder TestAgility(string html)
         {
-            var theHtml = System.IO.File.ReadAllText(@"C:\Users\fred\Dropbox\VoterGuide\ScrapeSos\SosMar24_CandidateDetails.html");
+            var theHtml =
+                System.IO.File.ReadAllText(@"C:\Users\fred\Dropbox\VoterGuide\ScrapeSos\3_CandidateDetailsMar24.html");
+
+            // declare object of HtmlDocument
+            HtmlDocument htmlDoc = new HtmlDocument();
+
+            htmlDoc.LoadHtml(theHtml);
+
+            const string tgtDiv = "//*[@class=\"col1Inner\"]/table/tr";
+            var nodes = htmlDoc.DocumentNode.SelectNodes(tgtDiv);
+
+            if (nodes == null)
+            {
+                //CurrentStatus.ScrapeComplete = true;
+                //CurrentStatus.LastOpMessage = "Data table search returned null.";
+                //return false;
+            }
+
+            var allDataTable = nodes.FindFirst("table");
+
+
+            var htmlDocTh = new HtmlDocument();
+            htmlDocTh.LoadHtml(nodes[0].InnerHtml);
+
+
+            foreach (var node in nodes)
+            {
+
+                var candidateNode = node.InnerHtml;
+                var nameIdIdx =
+                    candidateNode.IndexOf("NameID=", StringComparison.Ordinal) +
+                    7; // .....&NameID=26758&FilerID=C2017000427&Type=candidate
+                var truncatedInner =
+                    candidateNode.Substring(nameIdIdx); // 26758&FilerID=C2017000427&Type=candidate.....
+
+            }
+
+            return new StringBuilder();
+        }
+
+        public static StringBuilder TestAgility3(string html)
+        {
+            var theHtml = System.IO.File.ReadAllText(@"C:\Users\fred\Dropbox\VoterGuide\ScrapeSos\3_CandidateDetailsMar24.html");
 
             // declare object of HtmlDocument
             HtmlDocument doc = new HtmlDocument();
             
             doc.LoadHtml(theHtml);
+            var rowcntr = 1;
 
             // Using LINQ to parse HTML table smartly 
+            //var HTMLTableTRList = from table in doc.DocumentNode.SelectNodes("//table").Cast<HtmlNode>()
+            //    from row in table.SelectNodes("//tr").Cast<HtmlNode>()
+            //    from cell in row.SelectNodes("th|td").Cast<HtmlNode>()
+            //    select new { Table_Name = rowcntr++, Cell_Text = cell.InnerText };
+
             var HTMLTableTRList = from table in doc.DocumentNode.SelectNodes("//table").Cast<HtmlNode>()
-                from row in table.SelectNodes("//tr").Cast<HtmlNode>()
-                from cell in row.SelectNodes("th|td").Cast<HtmlNode>()
-                select new { Table_Name = table.Id, Cell_Text = cell.InnerText };
+                  select new { Table_Name = rowcntr++, Cell_Text = table.Attributes };
 
             // now showing output of parsed HTML table
             var sb = new StringBuilder();
 
             bool start = false;
 
-            foreach (var cell in HTMLTableTRList)
+            foreach (var table in HTMLTableTRList)
             {
                 if (start)
                 {
-                    sb.AppendLine($"{cell.Table_Name}, {cell.Cell_Text}");
+                    sb.AppendLine($"{table.Table_Name}, {table.Cell_Text}");
                 }
                 else
                 {
-                    start = cell.Cell_Text.Contains("Qualified Candidates");
+                    start = table.Cell_Text.Contains("Qualified Candidates");
                 }
             }
+
+            //foreach (var cell in HTMLTableTRList)
+            //{
+            //    if (start)
+            //    {
+            //        sb.AppendLine($"{cell.Table_Name}, {cell.Cell_Text}");
+            //    }
+            //    else
+            //    {
+            //        start = cell.Cell_Text.Contains("Qualified Candidates");
+            //    }
+            //}
 
             return sb;
         }
@@ -89,3 +149,8 @@ namespace PageScrapeSos
         }
     }
 }
+/*
+ *
+    string a = htmlDoc.DocumentNode.SelectSingleNode("//input[@name='a']").GetAttributeValue("value", "default");
+
+ */
