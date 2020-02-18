@@ -34,6 +34,7 @@ namespace PageScrapeSos
 
         public static StringBuilder TestAgility(string html)
         {
+            var sb = new StringBuilder();
             var theHtml =
                 System.IO.File.ReadAllText(@"C:\Users\fred\Dropbox\VoterGuide\ScrapeSos\3_CandidateDetailsMar24.html");
 
@@ -62,40 +63,64 @@ namespace PageScrapeSos
                 if (tdObj.Attributes[0].Name == "colspan")
                 {
                     // Start of candidate section
-                    candDesc = tdObj.InnerText.Trim();
+                    candDesc = CleanUpWhiteSpace(tdObj.InnerText);
                     candTdCnt = 0;
+                    sb.Append("Candidate - ");
+                    sb.AppendLine(candDesc);
                 }
                 else
                 {
-                    // Get the two TD's that have Tables of candidate info.
-                    var tableObj = tdObj.ChildNodes[1];
+                    var subdocHtml = nodetr.InnerHtml;
+                    var subdoc = new HtmlDocument();
+                    subdoc.LoadHtml(subdocHtml);
+                    var rowcntr = 1;
 
-                    for (var idx = 1; idx < tableObj.ChildNodes.Count + 1; idx++)
+                    var HTMLTableTRList = from table in subdoc.DocumentNode.SelectNodes("//table").Cast<HtmlNode>()
+                        from row in table.SelectNodes("tr").Cast<HtmlNode>()
+                        from cell in row.SelectNodes("td").Cast<HtmlNode>()
+                        select new { RowNum = rowcntr++, cellText = cell.InnerText };
+
+                    foreach (var cell in HTMLTableTRList)
                     {
-                        if (tableObj.ChildNodes.Count > 0)
-                        {
-                            var tr = tableObj.ChildNodes[1];
-
-                            if (tr.ChildNodes.Count > 0)
-                            {
-                                var td = tr.ChildNodes[1];
-
-                                var txt = td.InnerText;
-                            }
-                        }
+                        sb.AppendLine($"{cell.RowNum}, {CleanUpWhiteSpace(cell.cellText)}");
                     }
 
 
-                    if (candTdCnt == 1)
-                    {
-                        
-                    }
+                    //// Get the two TD's that have Tables of candidate info.
+                    //var tableObj = tdObj.ChildNodes[1];
+
+                    //for (var idx = 1; idx < tableObj.ChildNodes.Count + 1; idx++)
+                    //{
+                    //    if (tableObj.ChildNodes.Count > 0)
+                    //    {
+                    //        var tr = tableObj.ChildNodes[1];
+
+                    //        if (tr.ChildNodes.Count > 0)
+                    //        {
+                    //            var td = tr.ChildNodes[1];
+
+                    //            var txt = td.InnerText;
+                    //        }
+                    //    }
+                    //}
+
+
+                    //if (candTdCnt == 1)
+                    //{
+
+                    //}
 
                 }
 
             }
 
-            return new StringBuilder();
+            return sb;
+        }
+
+        public static string CleanUpWhiteSpace(string desc)
+        {
+            return desc.Trim().Replace("\r\n", " ").Replace("\t", string.Empty);
+
         }
 
         public static StringBuilder TestAgility3(string html)
