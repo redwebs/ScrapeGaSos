@@ -52,22 +52,46 @@ namespace PageScrapeSos
                 //return false;
             }
 
-            var allDataTable = nodes.FindFirst("table");
+            var candDesc = string.Empty;
+            var candTdCnt = 1;
 
-
-            var htmlDocTh = new HtmlDocument();
-            htmlDocTh.LoadHtml(nodes[0].InnerHtml);
-
-
-            foreach (var node in nodes)
+            foreach (var nodetr in nodes)
             {
+                var tdObj = nodetr.ChildNodes[1];  // td
 
-                var candidateNode = node.InnerHtml;
-                var nameIdIdx =
-                    candidateNode.IndexOf("NameID=", StringComparison.Ordinal) +
-                    7; // .....&NameID=26758&FilerID=C2017000427&Type=candidate
-                var truncatedInner =
-                    candidateNode.Substring(nameIdIdx); // 26758&FilerID=C2017000427&Type=candidate.....
+                if (tdObj.Attributes[0].Name == "colspan")
+                {
+                    // Start of candidate section
+                    candDesc = tdObj.InnerText.Trim();
+                    candTdCnt = 0;
+                }
+                else
+                {
+                    // Get the two TD's that have Tables of candidate info.
+                    var tableObj = tdObj.ChildNodes[1];
+
+                    for (var idx = 1; idx < tableObj.ChildNodes.Count + 1; idx++)
+                    {
+                        if (tableObj.ChildNodes.Count > 0)
+                        {
+                            var tr = tableObj.ChildNodes[1];
+
+                            if (tr.ChildNodes.Count > 0)
+                            {
+                                var td = tr.ChildNodes[1];
+
+                                var txt = td.InnerText;
+                            }
+                        }
+                    }
+
+
+                    if (candTdCnt == 1)
+                    {
+                        
+                    }
+
+                }
 
             }
 
