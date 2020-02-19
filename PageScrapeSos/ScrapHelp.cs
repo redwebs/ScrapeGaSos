@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HtmlAgilityPack;
@@ -34,6 +35,8 @@ namespace PageScrapeSos
 
         public static StringBuilder TestAgility(string html)
         {
+            var candList = new List<CandidateSos>();
+
             var sb = new StringBuilder();
             var theHtml =
                 System.IO.File.ReadAllText(@"C:\Users\fred\Dropbox\VoterGuide\ScrapeSos\3_CandidateDetailsMar24.html");
@@ -54,7 +57,6 @@ namespace PageScrapeSos
             }
 
             var candDesc = string.Empty;
-            var candTdCnt = 1;
 
             foreach (var nodetr in nodes)
             {
@@ -64,57 +66,95 @@ namespace PageScrapeSos
                 {
                     // Start of candidate section
                     candDesc = CleanUpWhiteSpace(tdObj.InnerText);
-                    candTdCnt = 0;
                     sb.Append("Candidate - ");
                     sb.AppendLine(candDesc);
                 }
                 else
                 {
-                    var subdocHtml = nodetr.InnerHtml;
+                    // Get candidates 
                     var subdoc = new HtmlDocument();
-                    subdoc.LoadHtml(subdocHtml);
+                    subdoc.LoadHtml(nodetr.InnerHtml);
                     var rowcntr = 1;
 
-                    var HTMLTableTRList = from table in subdoc.DocumentNode.SelectNodes("//table").Cast<HtmlNode>()
-                        from row in table.SelectNodes("tr").Cast<HtmlNode>()
-                        from cell in row.SelectNodes("td").Cast<HtmlNode>()
-                        select new { RowNum = rowcntr++, cellText = cell.InnerText };
+                    var candTrRows = from table in subdoc.DocumentNode.SelectNodes("//table")
+                        from row in table.SelectNodes("tr")
+                        from cell in row.SelectNodes("td")
+                        select new CellData { RowNum = rowcntr++, CellText = CleanUpWhiteSpace(cell.InnerText) };
 
-                    foreach (var cell in HTMLTableTRList)
+                    foreach (var cell in candTrRows)
                     {
-                        sb.AppendLine($"{cell.RowNum}, {CleanUpWhiteSpace(cell.cellText)}");
+                        sb.AppendLine($"{cell.RowNum}, {cell.CellText}");
                     }
 
-
-                    //// Get the two TD's that have Tables of candidate info.
-                    //var tableObj = tdObj.ChildNodes[1];
-
-                    //for (var idx = 1; idx < tableObj.ChildNodes.Count + 1; idx++)
-                    //{
-                    //    if (tableObj.ChildNodes.Count > 0)
-                    //    {
-                    //        var tr = tableObj.ChildNodes[1];
-
-                    //        if (tr.ChildNodes.Count > 0)
-                    //        {
-                    //            var td = tr.ChildNodes[1];
-
-                    //            var txt = td.InnerText;
-                    //        }
-                    //    }
-                    //}
+                    sb.AppendLine("");
+                }
+            }
+            return sb;
+        }
 
 
-                    //if (candTdCnt == 1)
-                    //{
+        public static CandidateSos FillCandidate(List<CellData> cellData, string officeName)
+        {
+            var candidate = new CandidateSos()
+                { OfficeName = officeName};
 
-                    //}
 
+            foreach (var data in cellData)
+            {
+                switch (data.RowNum)
+                {
+                    case 1:
+                        candidate.CandidateName = data.CellText;
+                        break;
+
+                    default:
+
+                        switch (data.CellText.Substring(0, 5))
+                        {
+                            case "E-mai":
+
+                                break;
+
+                            case "INCUM":
+
+                                break;
+
+                            case "OCCUP":
+
+                                break;
+
+                            case "QUALI":
+
+                                break;
+
+                            case "PARTY":
+
+                                break;
+
+                            case "PHONE":
+
+                                break;
+
+                            case "WEBSI":
+
+                                break;
+
+                            default:
+
+                                // Must be Address, CityStZip
+
+                                break;
+
+                        }
+                        break;
                 }
 
+                
             }
 
-            return sb;
+
+
+            return candidate;
         }
 
         public static string CleanUpWhiteSpace(string desc)
@@ -196,6 +236,12 @@ namespace PageScrapeSos
 
             return sb;
         }
+    }
+
+    public class CellData
+    {
+        public int RowNum { get; set; }
+        public string CellText { get; set; }
     }
 }
 /*

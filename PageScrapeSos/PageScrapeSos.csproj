@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="AdditionalInfo.cs" />
     <Compile Include="Candidate.cs" />
+    <Compile Include="CandidateSos.cs" />
     <Compile Include="Election.cs" />
     <Compile Include="FormSearch.cs" />
     <Compile Include="NetHttpClient.cs" />
