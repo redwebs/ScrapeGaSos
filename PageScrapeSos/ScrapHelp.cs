@@ -31,22 +31,20 @@ namespace PageScrapeSos
             return new Tuple<int, int>(currentPgNum, totalPages);
         }
 
-
-
         public static StringBuilder TestAgility(string html)
         {
             var candList = new List<CandidateSos>();
 
             var sb = new StringBuilder();
             var theHtml =
-                System.IO.File.ReadAllText(@"C:\Users\fred\Dropbox\VoterGuide\ScrapeSos\3_CandidateDetailsMar24.html");
+                System.IO.File.ReadAllText(@"C:\Users\fred\Dropbox\VoterGuide\ScrapeSos\3_CandidateDetailsMar24-2.html");
 
             // declare object of HtmlDocument
             HtmlDocument htmlDoc = new HtmlDocument();
 
             htmlDoc.LoadHtml(theHtml);
 
-            const string tgtDiv = "//*[@class=\"col1Inner\"]/table/tr";
+            const string tgtDiv = "//*[@class=\"col1Inner\"]/table//tr//";
             var nodes = htmlDoc.DocumentNode.SelectNodes(tgtDiv);
 
             if (nodes == null)
@@ -62,7 +60,7 @@ namespace PageScrapeSos
             {
                 var tdObj = nodetr.ChildNodes[1];  // td
 
-                if (tdObj.Attributes[0].Name == "colspan")
+                if (tdObj.Attributes[1].Name == "colspan")
                 {
                     // Start of candidate section
                     candDesc = CleanUpWhiteSpace(tdObj.InnerText);
@@ -81,14 +79,22 @@ namespace PageScrapeSos
                         from cell in row.SelectNodes("td")
                         select new CellData { RowNum = rowcntr++, CellText = CleanUpWhiteSpace(cell.InnerText) };
 
-                    foreach (var cell in candTrRows)
-                    {
-                        sb.AppendLine($"{cell.RowNum}, {cell.CellText}");
-                    }
+                    candList.Add(FillCandidate(candTrRows.ToList(), candDesc));
+
+                    //foreach (var cell in candTrRows)
+                    //{
+                    //    sb.AppendLine($"{cell.RowNum}, {cell.CellText}");
+                    //}
 
                     sb.AppendLine("");
                 }
             }
+            foreach (var cand in candList)
+            {
+                sb.AppendLine(cand.ToCsv());
+            }
+
+
             return sb;
         }
 
@@ -101,51 +107,78 @@ namespace PageScrapeSos
 
             foreach (var data in cellData)
             {
-                switch (data.RowNum)
+                var cellTextLen = data.CellText.Length;
+
+                switch (data.CellText.Substring(0, 5))
                 {
-                    case 1:
-                        candidate.CandidateName = data.CellText;
+                    case "E-mai":
+                        candidate.Email = "Unavailable";
+                        break;
+
+                    case "INCUM":
+                        if (cellTextLen > 11)
+                        {
+                            candidate.Incumbent = data.CellText.Remove(0, 11);
+                        }
+                        break;
+
+                    case "OCCUP":
+                        if (cellTextLen > 12)
+                        {
+                            candidate.Occupation = data.CellText.Remove(0, 12);
+                        }
+                        break;
+
+                    case "QUALI":
+                        if (cellTextLen > 16)
+                        {
+                            candidate.QualifiedDate = data.CellText.Remove(0, 16);
+                        }
+                        break;
+
+                    case "PARTY":
+                        if (cellTextLen > 7)
+                        {
+                            candidate.Party = data.CellText.Remove(0, 7);
+                        }
+                        break;
+
+                    case "PHONE":
+                        if (cellTextLen > 14)
+                        {
+                            data.CellText = data.CellText.Remove(0, 14);
+                        }
+                        break;
+
+                    case "WEBSI":
+                        if (cellTextLen > 9)
+                        {
+                            candidate.Website = data.CellText.Remove(0, 9);
+                        }
+
                         break;
 
                     default:
 
-                        switch (data.CellText.Substring(0, 5))
+                        // Must be Name Address, CityStZip
+                        switch (data.RowNum)
                         {
-                            case "E-mai":
-
+                            case 1:
+                                candidate.CandidateName = data.CellText;
                                 break;
 
-                            case "INCUM":
-
+                            case 2:
+                                candidate.Address = data.CellText;
                                 break;
 
-                            case "OCCUP":
-
+                            case 3:
+                                candidate.CityStZip = data.CellText;
                                 break;
-
-                            case "QUALI":
-
-                                break;
-
-                            case "PARTY":
-
-                                break;
-
-                            case "PHONE":
-
-                                break;
-
-                            case "WEBSI":
-
-                                break;
-
                             default:
 
-                                // Must be Address, CityStZip
-
                                 break;
-
                         }
+
                         break;
                 }
 

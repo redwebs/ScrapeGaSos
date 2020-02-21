@@ -18,7 +18,7 @@ namespace ScrapeConsoleSos
 
         private const string DnsNotResolved = "The remote name could not be resolved";
         private static string LastStat = string.Empty;
-        private List<Candidate> _candidateList;
+        private List<CandidateSos> _candidateList;
         private List<Election> _electionList;
 
         #region Form Init
@@ -75,7 +75,6 @@ namespace ScrapeConsoleSos
 
             var scrapeResult = new ScrapeResult
             {
-                Candidates = UpdateCandidates.Candidates,
                 Operation = scrapeOp
             };
 
@@ -91,7 +90,7 @@ namespace ScrapeConsoleSos
                 case ScrapeOp.Candidates:
 
                     var formSrchSosCand = new FormSearchSos(year, electionId );
-
+                    scrapeResult.ScrapeStat = UpdateCandidates.GetCandidates(formSrchSosCand);
                     break;
 
                 default:
@@ -189,7 +188,7 @@ namespace ScrapeConsoleSos
 
                         case ScrapeOp.Candidates:
 
-                            _candidateList = (List<Candidate>)result.Candidates;
+                            _candidateList = (List<CandidateSos>)result.Candidates;
                             break;
 
                         default:
@@ -346,7 +345,7 @@ namespace ScrapeConsoleSos
                 return;
             }
 
-            var dummy = new Candidate();
+            var dummy = new CandidateSos();
 
             var sb = new StringBuilder();
 
@@ -357,7 +356,7 @@ namespace ScrapeConsoleSos
                 sb.AppendLine(candidate.ToCsv());
             }
 
-            var path = $"{tbCsvFilePath.Text}\\{Utils.FilenameWithDateTime("Candidates", "csv")}";
+            var path = $"{tbCsvFilePath.Text}\\{Utils.FilenameWithDateTime("CandidatesSos", "csv")}";
             FileHelper.StringToFile(sb, path);
 
             AppendLogBox($"CSV file written to {path}");

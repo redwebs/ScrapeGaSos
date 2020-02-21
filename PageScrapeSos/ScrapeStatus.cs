@@ -56,6 +56,7 @@ namespace PageScrapeSos
 
         public List<Election> Elections { get; set; }
 
+        public List<CandidateSos> Candidates { get; set; }
 
         public override string ToString()
         {

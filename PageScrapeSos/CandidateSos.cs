@@ -13,7 +13,7 @@ namespace PageScrapeSos
 
         public string OfficeName { get; set; } = string.Empty;
 
-        public string CandidateName { get; set; }
+        public string CandidateName { get; set; } = string.Empty;
 
         public string Address { get; set; } = string.Empty;
 
@@ -29,7 +29,7 @@ namespace PageScrapeSos
 
         public string Occupation { get; set; } = string.Empty;
 
-        public bool Incumbent { get; set; } = false;
+        public string Incumbent { get; set; } = string.Empty;
 
         public string QualifiedDate { get; set; } = string.Empty;
 
@@ -59,7 +59,7 @@ namespace PageScrapeSos
             sb.Append(QualifiedDate);
 
             sb.Append(", Incumbent: ");
-            sb.Append(Incumbent ? "Yes" : "No");
+            sb.Append(Incumbent);
             sb.Append(", Year: ");
             sb.Append(Year);
 

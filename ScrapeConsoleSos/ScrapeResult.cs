@@ -15,7 +15,7 @@ namespace ScrapeConsoleSos
 
         public int CandidatesScraped { get; set; } = 0;
 
-        public List<Candidate> Candidates { get; set; }
+        public List<CandidateSos> Candidates { get; set; }
 
         public List<Election> Elections { get; set; }
 

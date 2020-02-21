@@ -134,30 +134,145 @@ namespace PageScrapeSos
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(contentString);
 
-            const string tgtSelect = "//select[@id='id_election']/option";
+            var candList = new List<CandidateSos>();
 
-            var electNodes = htmlDoc.DocumentNode.SelectNodes(tgtSelect);
+            const string tgtDiv = "//*[@class=\"col1Inner\"]/table/tr";
+            var nodes = htmlDoc.DocumentNode.SelectNodes(tgtDiv);
 
-            if (electNodes == null)
+            if (nodes == null)
             {
                 CurrentStatus.ScrapeComplete = true;
-                CurrentStatus.LastOpMessage = "ElectNodes search returned null.";
+                CurrentStatus.ScrapeSuccess = false;
+                CurrentStatus.LastOpMessage = "Data table search returned null.";
                 return CurrentStatus;
             }
 
-            foreach (var node in electNodes)
+            var candDesc = string.Empty;
+
+            foreach (var nodetr in nodes)
             {
-           //     elections.Add(new Election(node.Attributes[0].Value, node.InnerText));
+                var tdObj = nodetr.ChildNodes[1];  // td
+
+                if (tdObj.Attributes[0].Name == "colspan")
+                {
+                    // Start of candidate section
+                    candDesc = CleanUpWhiteSpace(tdObj.InnerText);
+                }
+                else
+                {
+                    // Get candidates 
+                    var subdoc = new HtmlDocument();
+                    subdoc.LoadHtml(nodetr.InnerHtml);
+                    var rowcntr = 1;
+
+                    var candTrRows = from table in subdoc.DocumentNode.SelectNodes("//table")
+                                     from row in table.SelectNodes("tr")
+                                     from cell in row.SelectNodes("td")
+                                     select new CellData { RowNum = rowcntr++, CellText = CleanUpWhiteSpace(cell.InnerText) };
+
+                    candList.Add(FillCandidate(candTrRows.ToList(), candDesc));
+
+                }
             }
 
             CurrentStatus.ScrapeComplete = true;
             CurrentStatus.ScrapeSuccess = true;
-        //    CurrentStatus.Elections = elections;
-            
+            CurrentStatus.Candidates = candList;
             return CurrentStatus;
         }
 
 
+        public static CandidateSos FillCandidate(List<CellData> cellData, string officeName)
+        {
+            var candidate = new CandidateSos()
+            { OfficeName = officeName };
+
+
+            foreach (var data in cellData)
+            {
+                var cellTextLen = data.CellText.Length;
+
+                switch (data.CellText.Substring(0, 5))
+                {
+                    case "E-mai":
+                        candidate.Email = "Unavailable";
+                        break;
+
+                    case "INCUM":
+                        if (cellTextLen > 11)
+                        {
+                            candidate.Incumbent = data.CellText.Remove(0, 11);
+                        }
+                        break;
+
+                    case "OCCUP":
+                        if (cellTextLen > 12)
+                        {
+                            candidate.Occupation = data.CellText.Remove(0, 12);
+                        }
+                        break;
+
+                    case "QUALI":
+                        if (cellTextLen > 16)
+                        {
+                            candidate.QualifiedDate = data.CellText.Remove(0, 16);
+                        }
+                        break;
+
+                    case "PARTY":
+                        if (cellTextLen > 7)
+                        {
+                            candidate.Party = data.CellText.Remove(0, 7);
+                        }
+                        break;
+
+                    case "PHONE":
+                        if (cellTextLen > 14)
+                        {
+                            data.CellText = data.CellText.Remove(0, 14);
+                        }
+                        break;
+
+                    case "WEBSI":
+                        if (cellTextLen > 9)
+                        {
+                            candidate.Website = data.CellText.Remove(0, 9);
+                        }
+
+                        break;
+
+                    default:
+
+                        // Must be Name Address, CityStZip
+                        switch (data.RowNum)
+                        {
+                            case 1:
+                                candidate.CandidateName = data.CellText;
+                                break;
+
+                            case 2:
+                                candidate.Address = data.CellText;
+                                break;
+
+                            case 3:
+                                candidate.CityStZip = data.CellText;
+                                break;
+                            default:
+
+                                break;
+                        }
+
+                        break;
+                }
+            }
+
+            return candidate;
+        }
+
+        public static string CleanUpWhiteSpace(string desc)
+        {
+            return desc.Trim().Replace("\r\n", " ").Replace("\t", string.Empty);
+        }
 
         public static bool ReadFirstPage(FormSearch formSearch)
         {
