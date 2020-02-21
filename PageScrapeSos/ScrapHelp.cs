@@ -43,8 +43,9 @@ namespace PageScrapeSos
             HtmlDocument htmlDoc = new HtmlDocument();
 
             htmlDoc.LoadHtml(theHtml);
+            //htmlDoc.LoadHtml(CleanUpWhiteSpace(theHtml));
 
-            const string tgtDiv = "//*[@class=\"col1Inner\"]/table//tr";
+            const string tgtDiv = "//*[@class=\"col1Inner\"]/table/tr";
             var nodes = htmlDoc.DocumentNode.SelectNodes(tgtDiv);
 
             if (nodes == null)
@@ -58,9 +59,9 @@ namespace PageScrapeSos
 
             foreach (var nodetr in nodes)
             {
-                var tdObj = nodetr.ChildNodes[1];  // td
+                var tdObj = nodetr.ChildNodes[0];  // td  1
 
-                if (tdObj.Attributes[1].Name == "colspan")
+                if (tdObj.Attributes.Count > 0 && tdObj.Attributes[0].Name == "colspan")  // Account for #text children here
                 {
                     // Start of candidate section
                     candDesc = CleanUpWhiteSpace(tdObj.InnerText);

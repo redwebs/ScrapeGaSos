@@ -64,6 +64,7 @@ namespace PageScrapeSos
 
         public static ScrapeStatus GetElections(FormSearchSos formSearchSos)
         {
+            // TODO: put exception catcher here for network problems.
             var contentString = PostIt(new Uri(OfficeSearchResultsUrl), formSearchSos).Result;
 
             if (!_httpRespMsg.IsSuccessStatusCode)
@@ -133,6 +134,7 @@ namespace PageScrapeSos
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(contentString);
+            var year = formSearchSos.ElectionYear;
 
             var candList = new List<CandidateSos>();
 
@@ -151,9 +153,9 @@ namespace PageScrapeSos
 
             foreach (var nodetr in nodes)
             {
-                var tdObj = nodetr.ChildNodes[1];  // td
+                var tdObj = nodetr.ChildNodes[0];  // td  1
 
-                if (tdObj.Attributes[0].Name == "colspan")
+                if (tdObj.Attributes.Count > 0 && tdObj.Attributes[0].Name == "colspan")  // Account for #text children here
                 {
                     // Start of candidate section
                     candDesc = CleanUpWhiteSpace(tdObj.InnerText);
@@ -170,7 +172,7 @@ namespace PageScrapeSos
                                      from cell in row.SelectNodes("td")
                                      select new CellData { RowNum = rowcntr++, CellText = CleanUpWhiteSpace(cell.InnerText) };
 
-                    candList.Add(FillCandidate(candTrRows.ToList(), candDesc));
+                    candList.Add(FillCandidate(candTrRows.ToList(), candDesc, year.VarValue));
 
                 }
             }
@@ -182,10 +184,13 @@ namespace PageScrapeSos
         }
 
 
-        public static CandidateSos FillCandidate(List<CellData> cellData, string officeName)
+        public static CandidateSos FillCandidate(List<CellData> cellData, string officeName, string year)
         {
             var candidate = new CandidateSos()
-            { OfficeName = officeName };
+            {
+                OfficeName = officeName,
+                Year = year
+            };
 
 
             foreach (var data in cellData)
@@ -195,7 +200,7 @@ namespace PageScrapeSos
                 switch (data.CellText.Substring(0, 5))
                 {
                     case "E-mai":
-                        candidate.Email = "Unavailable";
+                        candidate.Email = "Blocked";
                         break;
 
                     case "INCUM":
@@ -229,7 +234,7 @@ namespace PageScrapeSos
                     case "PHONE":
                         if (cellTextLen > 14)
                         {
-                            data.CellText = data.CellText.Remove(0, 14);
+                            candidate.PhoneNumber = data.CellText.Remove(0, 14);
                         }
                         break;
 

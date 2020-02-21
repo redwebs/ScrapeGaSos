@@ -88,7 +88,6 @@ namespace ScrapeConsoleSos
                     break;
 
                 case ScrapeOp.Candidates:
-
                     var formSrchSosCand = new FormSearchSos(year, electionId );
                     scrapeResult.ScrapeStat = UpdateCandidates.GetCandidates(formSrchSosCand);
                     break;
@@ -184,23 +183,23 @@ namespace ScrapeConsoleSos
                             }
 
                             btnLoadElections.Enabled = true;
+                            AppendLogBox($"Elections Job finished, {_electionList.Count - 1} Elections, Elapsed Time: {result.ElapsedTime}");
+
                             break;
 
                         case ScrapeOp.Candidates:
 
-                            _candidateList = (List<CandidateSos>)result.Candidates;
+                            _candidateList = result.ScrapeStat.Candidates;
+                            btnStart.Enabled = true;
+                            AppendLogBox($" Candidates Job finished, {_candidateList.Count} Candidates, Elapsed Time: {result.ElapsedTime}");
+
                             break;
 
                         default:
                             break;
                     }
-
-             //       tbStatus.Text = $" Job finished, {_candidateList.Count} Candidates, Elapsed Time: {result.ElapsedTime}";
-               //     tbStatus.Text = $" Job finished, {_electionList.Count} Elections, Elapsed Time: {result.ElapsedTime}";
                 }
             }
-            //AppendLogBox($"Total Bytes Read: {result.SequenceStat.BytesReceived:###,###}");
-            AppendLogBox(tbStatus.Text);
         }
 
         #endregion Background Worker Events
@@ -296,6 +295,7 @@ namespace ScrapeConsoleSos
                 AppendLogBox("Cannot get candidates, no Election selected.");
                 return;
             }
+            btnStart.Enabled = false;
 
             var election = ((ComboBoxItem)cboElections.SelectedItem).Value;
 
@@ -309,7 +309,7 @@ namespace ScrapeConsoleSos
             }
 
             btnLoadElections.Enabled = false;                           // Disable the Start button
-            txtLog.Text = "Starting get candidates.";
+            AppendLogBox("Starting get candidates.");
 
             backgroundWorkerScrape.RunWorkerAsync(arrObjects);  // Call the background worker, process on a separate thread
         }

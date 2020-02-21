@@ -7,9 +7,7 @@ namespace PageScrapeSos
     {
         private const string QualifyingCandidateUrl = "https://elections.sos.ga.gov/GAElection/CandidateDetails";
 
-        public string ElectionId { get; set; }
-
-        public int Year { get; set; }
+        public string Year { get; set; } = string.Empty;
 
         public string OfficeName { get; set; } = string.Empty;
 
@@ -70,6 +68,7 @@ namespace PageScrapeSos
         {
             var sb = new StringBuilder();
 
+            sb.Append("\"OfficeName\",");
             sb.Append("\"CandidateName\",");
             sb.Append("\"Address\",");
             sb.Append("\"CityStZip\",");
@@ -79,9 +78,7 @@ namespace PageScrapeSos
             sb.Append("\"PhoneNumber\",");
             sb.Append("\"Occupation\",");
 
-            sb.Append("\"OfficeName\",");
             sb.Append("\"QualifiedDate\",");
-
             sb.Append("\"Incumbent\",");
             sb.Append("\"Year\"");
 
@@ -91,6 +88,7 @@ namespace PageScrapeSos
         public string ToCsv()
         {
             var sb = new StringBuilder();
+            sb.Append($"\"{OfficeName}\",");
             sb.Append($"\"{CandidateName}\",");
             sb.Append($"\"{Address}\",");
             sb.Append($"\"{CityStZip}\",");
@@ -98,8 +96,6 @@ namespace PageScrapeSos
             sb.Append($"\"{Party}\",");
             sb.Append($"\"{PhoneNumber}\",");
             sb.Append($"\"{Occupation}\",");
-            sb.Append($"\"{CityStZip}\",");
-            sb.Append($"\"{OfficeName}\",");
             sb.Append($"\"{QualifiedDate}\",");
             sb.Append($"\"{Incumbent}\",");
             sb.Append($"\"{Year}\"");
