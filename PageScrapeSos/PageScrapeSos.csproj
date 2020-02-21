@@ -61,14 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdditionalInfo.cs" />
-    <Compile Include="Candidate.cs" />
     <Compile Include="CandidateSos.cs" />
     <Compile Include="Election.cs" />
     <Compile Include="FormSearch.cs" />
     <Compile Include="NetHttpClient.cs" />
-    <Compile Include="PostResponseItem.cs" />
-    <Compile Include="ScrapeSequence.cs" />
     <Compile Include="ScrapeStatus.cs" />
     <Compile Include="ScrapeUserStatus.cs" />
     <Compile Include="ScrapHelp.cs" />

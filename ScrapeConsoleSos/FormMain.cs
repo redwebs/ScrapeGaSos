@@ -103,7 +103,7 @@ namespace ScrapeConsoleSos
 
         private void BackgroundWorkerScrape_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            // Update UI
+            // Update UI - Not currently used for Sec of State
             var status = (ScrapeUserStatus) e.UserState;
             progressBar1.Maximum = status.OfficeCount;
             progressBar1.Increment(status.OfficesSearched);
@@ -203,83 +203,6 @@ namespace ScrapeConsoleSos
         }
 
         #endregion Background Worker Events
-
-        // ++++++++++++++++++++++ Background Worker Functions +++++++++++++++++++++
-
-        #region Scrape Testing and Development
-
-        private void TestAdditionalInfo()
-        {
-            // Test function to get additional info for a single office
-
-            var candidate = new Candidate
-            {
-                NameId = "11068",
-                FilerId = "C2018001171",
-                OfficeTypeId = "130",
-                OfficeName = "Madison Fain Barton"
-            };
-
-            backgroundWorkerScrape.ReportProgress(1, "Begin TestAdditionalInfo : " + Environment.NewLine );
-
-            if (!AdditionalInfo.ReadThePage(candidate))
-            {
-                backgroundWorkerScrape.ReportProgress(1, AdditionalInfo.AddInfoStatus.LastOpMessage);
-                return;
-            }
-            
-            backgroundWorkerScrape.ReportProgress(2, AdditionalInfo.AddInfoStatus.LastOpMessage + Environment.NewLine);
-        }
-
-        private void RunSingleQuery()
-        {
-            // Test function to scrape a single office
-
-            var search = new FormSearch
-            {
-                ElectionYear = "2018",
-                OfficeTypeId = "120",
-                OfficeName = "State%20Senate",
-                District = "",
-                Circuit = "",
-                Division = "",
-                County = "",
-                City = "",
-                FilerId = ""
-            };
-
-            backgroundWorkerScrape.ReportProgress(1, "Begin new search with FormSearch : " + Environment.NewLine + search);
-
-            if (!UpdateCandidates.ReadFirstPage(search))
-            {
-                backgroundWorkerScrape.ReportProgress(1, UpdateCandidates.CurrentStatus.LastOpMessage);
-                return;
-            }
-
-            var candidates = UpdateCandidates.Candidates;
-
-            backgroundWorkerScrape.ReportProgress(2, UpdateCandidates.CurrentStatus.LastOpMessage + Environment.NewLine);
-
-            while (UpdateCandidates.CurrentStatus.LastPageCompleted < UpdateCandidates.CurrentStatus.TotalPages)
-            {
-                var finished = UpdateCandidates.ReadSubsequentPage(search);
-                backgroundWorkerScrape.ReportProgress(2, UpdateCandidates.CurrentStatus.LastOpMessage + Environment.NewLine);
-            }
-        }
-
-        private static SequenceStatus RunAllQueries(int year, BackgroundWorker bgWorker)
-        {
-            var path = $"{Utils.GetExecutingDirectory()}\\Data\\OfficeNames-Ids.json";
-
-            var program = new ScrapeSequence(path);
-
-            program.RunAllQueries(year, bgWorker);
-
-            return program.SeqStatus;
-        }
-
-        #endregion Scrape Testing and development
-
 
         // +++++++++++++++++++++++ UI Events +++++++++++++++++++++++++++++++++++
 

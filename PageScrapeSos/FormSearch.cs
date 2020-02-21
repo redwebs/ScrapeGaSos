@@ -34,12 +34,12 @@ namespace PageScrapeSos
     {
         /*
 
-	    1. nbElecYear:2020
-	    2. id_election:35214
-	    3. cd_party:
-	    4. cdOfficeType:
-	    5. id_office:0
-	    6. cdFlow:S
+        1. nbElecYear:2020
+        2. id_election:35214
+        3. cd_party:
+        4. cdOfficeType:
+        5. id_office:0
+        6. cdFlow:S
 
         */
 
