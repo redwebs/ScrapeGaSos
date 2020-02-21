@@ -44,7 +44,7 @@ namespace PageScrapeSos
 
             htmlDoc.LoadHtml(theHtml);
 
-            const string tgtDiv = "//*[@class=\"col1Inner\"]/table//tr//";
+            const string tgtDiv = "//*[@class=\"col1Inner\"]/table//tr";
             var nodes = htmlDoc.DocumentNode.SelectNodes(tgtDiv);
 
             if (nodes == null)
