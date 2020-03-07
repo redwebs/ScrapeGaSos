@@ -163,6 +163,8 @@ namespace PageScrapeSos
                     subdoc.LoadHtml(nodetr.InnerHtml);
                     var rowcntr = 1;
 
+                    // November fails here
+
                     var candTrRows = from table in subdoc.DocumentNode.SelectNodes("//table")
                                      from row in table.SelectNodes("tr")
                                      from cell in row.SelectNodes("td")
@@ -192,6 +194,14 @@ namespace PageScrapeSos
             foreach (var data in cellData)
             {
                 var cellTextLen = data.CellText.Length;
+
+                // get labeled text first
+
+                if (data.CellText.Length < 5)
+                {
+                    // "N/A" or other junk
+                    continue;
+                }
 
                 switch (data.CellText.Substring(0, 5))
                 {
@@ -244,7 +254,6 @@ namespace PageScrapeSos
 
                     default:
 
-                        // Must be Name Address, CityStZip
                         switch (data.RowNum)
                         {
                             case 1:
@@ -258,13 +267,14 @@ namespace PageScrapeSos
                             case 3:
                                 candidate.CityStZip = data.CellText;
                                 break;
+
                             default:
 
-                                break;
-                        }
+                            break;      // Inner default
 
-                        break;
-                }
+                        }               // End Inner switch
+                    break;              // Outer default
+                }                       // End Outer switch
             }
 
             return candidate;

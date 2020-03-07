@@ -17,7 +17,8 @@ namespace ScrapeConsoleSos
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private const string DnsNotResolved = "The remote name could not be resolved";
-        private static string LastStat = string.Empty;
+        private static string _lastStat = string.Empty;
+        private static string _currentElection = string.Empty;
         private List<CandidateSos> _candidateList;
         private List<Election> _electionList;
 
@@ -111,10 +112,10 @@ namespace ScrapeConsoleSos
 
             var thisStat = $"{status.ElapsedTime} Candidate: {status.Candidate}";
 
-            if (thisStat != LastStat)
+            if (thisStat != _lastStat)
             {
                 AppendLogBox(thisStat);
-                LastStat = thisStat;
+                _lastStat = thisStat;
             }
 
             if (!string.IsNullOrEmpty(status.Message))
@@ -221,6 +222,7 @@ namespace ScrapeConsoleSos
             btnStart.Enabled = false;
 
             var election = ((ComboBoxItem)cboElections.SelectedItem).Value;
+            _currentElection = cboElections.Text.Substring(0,5).Replace("/","-");
 
             // Array = {0-Operation enum, 1-Year string, 2-Election string}
             var arrObjects = new object[] { operation, year, election};        // Declare the array of objects
@@ -279,7 +281,7 @@ namespace ScrapeConsoleSos
                 sb.AppendLine(candidate.ToCsv());
             }
 
-            var path = $"{tbCsvFilePath.Text}\\{Utils.FilenameWithDateTime("CandidatesSos", "csv")}";
+            var path = $"{tbCsvFilePath.Text}\\{Utils.FilenameWithDateTime($"CandSos{_currentElection}_", "csv")}";
             FileHelper.StringToFile(sb, path);
 
             AppendLogBox($"CSV file written to {path}");
