@@ -159,6 +159,11 @@ namespace PageScrapeSos
                 else
                 {
                     // Get candidates 
+                    if (nodetr.InnerHtml.Contains("Qualified - Signatures Required"))
+                    {
+                        // We're at the end of the list, asterisk 
+                        break;
+                    }
                     var subdoc = new HtmlDocument();
                     subdoc.LoadHtml(nodetr.InnerHtml);
                     var rowcntr = 1;
