@@ -262,15 +262,15 @@ namespace PageScrapeSos
                         switch (data.RowNum)
                         {
                             case 1:
-                                candidate.CandidateName = data.CellText;
+                                candidate.CandidateName = data.CellText.Trim();
                                 break;
 
                             case 2:
-                                candidate.Address = data.CellText;
+                                candidate.Address = data.CellText.Trim();
                                 break;
 
                             case 3:
-                                candidate.CityStZip = data.CellText;
+                                candidate.CityStZip = data.CellText.Trim();
                                 break;
 
                             default:
