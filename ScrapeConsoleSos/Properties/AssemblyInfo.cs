@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fred Webs, LLC")]
 [assembly: AssemblyProduct("VoterGuideUtils")]
-[assembly: AssemblyCopyright("Copyright © Fred Webs LLC, 2020")]
+[assembly: AssemblyCopyright("Copyright © Fred Webs LLC, 2021")]
 [assembly: AssemblyTrademark("FWS")]
 [assembly: AssemblyCulture("")]
 
