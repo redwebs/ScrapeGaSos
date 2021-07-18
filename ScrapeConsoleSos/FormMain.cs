@@ -155,10 +155,18 @@ namespace ScrapeConsoleSos
                     }
                     else
                     {
-                        // Some other fatal error
-                        tbStatus.Text = $" Job aborted, {lastMsg}, Elapsed Time: {result.ElapsedTime}";
+                        if (result.ScrapeStat.Candidates == null)
+                        {
+                            tbStatus.Text = $" No candidates found for this election, Elapsed Time: {result.ElapsedTime}";
+                            btnStart.Enabled = true;
+                            AppendLogBox($" Candidates Job finished, no Candidates, Elapsed Time: {result.ElapsedTime}");
+                        }
+                        else
+                        {
+                            // Some other fatal error
+                            tbStatus.Text = $" Job aborted, {lastMsg}, Elapsed Time: {result.ElapsedTime}";
+                        }
                     }
-
                 }
                 else
                 {
